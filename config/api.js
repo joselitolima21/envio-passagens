@@ -66,7 +66,8 @@ module.exports = async function (data,horaInicial,horaFinal,id,order) {
     }
     // Fazendo a chamada com o cookieString do json
     const cookies = await JSON.parse(fs.readFileSync(path.resolve(__dirname,'../cookies/cookies.json'), 'utf8'))
-    const cookieString = cookies[3].name+"="+cookies[3].value+"; "+cookies[4].name+"="+cookies[4].value+"; "+cookies[2].name+"="+cookies[2].value+"; "+cookies[0].name+"="+cookies[0].value
+    const cookieString = cookies[4].name+"="+cookies[4].value+"; "+cookies[3].name+"="+cookies[3].value+"; "+cookies[2].name+"="+cookies[2].value+"; "+cookies[0].name+"="+cookies[0].value
+
     logger.info(`${id} - ${new Date().toLocaleString()} - 0 - leu o arquivo cookies.json com sucesso`)
     const resultCookie = await chamada(cookieString)
 
