@@ -1,0 +1,59 @@
+[
+  {
+    "name": "_gat",
+    "value": "1",
+    "domain": ".codtran.ws",
+    "path": "/",
+    "expires": 1640471650,
+    "size": 5,
+    "httpOnly": false,
+    "secure": false,
+    "session": false,
+    "sameParty": false,
+    "sourceScheme": "Secure",
+    "sourcePort": 443
+  },
+  {
+    "name": "_gid",
+    "value": "GA1.2.837139755.1640471590",
+    "domain": ".codtran.ws",
+    "path": "/",
+    "expires": 1640558006,
+    "size": 30,
+    "httpOnly": false,
+    "secure": false,
+    "session": false,
+    "sameParty": false,
+    "sourceScheme": "Secure",
+    "sourcePort": 443
+  },
+  {
+    "name": "_ga",
+    "value": "GA1.2.542742181.1640471590",
+    "domain": ".codtran.ws",
+    "path": "/",
+    "expires": 1703543606,
+    "size": 29,
+    "httpOnly": false,
+    "secure": false,
+    "session": false,
+    "sameParty": false,
+    "sourceScheme": "Secure",
+    "sourcePort": 443
+  },
+  {
+    "name": ".AspNetCore.Antiforgery.1wihcXmyFE8",
+    "value": "CfDJ8BR0VWaWjN5EkbbwFpKGucpLmX-xkaPhEuJqYn19CNNGdO3AwYZ-PG7M78KF7BOu9jiPCQLTjzL6ZaqMdJE3rInrRrNNTMrmvtOcZepPPwG1vD6dewmgBq6usMkGugmbQbbxhTacUq6YInjcn1hE0dY",
+    "domain": "strans.codtran.ws",
+    "path": "/",
+    "expires": -1,
+    "size": 190,
+    "httpOnly": true,
+    "secure": false,
+    "session": true,
+    "sameSite": "Strict",
+    "sameParty": false,
+    "sourceScheme": "Secure",
+    "sourcePort": 443
+  }
+]
