@@ -83,10 +83,9 @@ module.exports = async function (data,horaInicial,horaFinal,id,order) {
         
         // Fazendo login e salvando o cookie
         const cookies = await newCookie()
-        const cookieString = cookies[3].name+"="+cookies[3].value+"; "+cookies[4].name+"="+cookies[4].value+"; "+cookies[2].name+"="+cookies[2].value+"; "+cookies[0].name+"="+cookies[0].value  
+        const cookieString = cookies[4].name+"="+cookies[4].value+"; "+cookies[3].name+"="+cookies[3].value+"; "+cookies[2].name+"="+cookies[2].value+"; "+cookies[0].name+"="+cookies[0].value  
         logger.info(`${id} - ${new Date().toLocaleString()} - 2 - arquivo de cookies criado com sucesso`)                 
         await cookieStrings.create({valor: cookies[0].expires})
-        
         // Fazendo a chamada com o novo cookie
         const resultCookie = await chamada(cookieString)
         logger.info(`${id} - ${new Date().toLocaleString()} - 2 - dados recebidos com sucesso, total de passagens: ${resultCookie.data.Total}`)            

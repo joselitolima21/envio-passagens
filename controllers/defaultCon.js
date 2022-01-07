@@ -45,8 +45,9 @@ exports.post = async (req,res) => {
                 "Authorization": 'SharedAccessSignature sr=streammjsp4.servicebus.windows.net%2Fteresina&sig=tQBEAAGRpvHNRCzk6vmt8Iv7Tgnt90CpQLHtbptMzro%3D&se=1948804547&skn=sendevent'
             },
             })
-                } catch{err=> logger.info(`${id} - ${new Date().toLocaleString()} - 3 - erro ocorrido: ${err}`)}
-        }}))
+                } catch{err=> logger.info(`${id} - ${new Date().toLocaleString()} - 3 - erro ocorrido: ${err.message}`)}
+            
+            }}))
         
 
         logger.info(`${id} - ${new Date().toLocaleString()} - 0 - salvo no BD, os dados da atlanta`)
@@ -69,8 +70,7 @@ exports.post = async (req,res) => {
                 placa:pass.PlacaVeiculo,
                 dataHora:pass.DataHoraPassagem,
                 cameraNumero: pass.Equipamento,
-            }).then().catch(err=> logger.info(`${id} - ${new Date().toLocaleString()} - 3 - erro ocorrido: ${err}`))
-
+            }).then().catch(err=> logger.info(`${id} - ${new Date().toLocaleString()} - 3 - erro ocorrido no salvamendo dos dados no BD:${err}`))
 
             // Enviando para o MJ
             await axios.post('https://streammjsp4.servicebus.windows.net/teresina/messages', {   
@@ -81,10 +81,9 @@ exports.post = async (req,res) => {
             headers: {
             "Content-Type": "application/json",
             "Authorization": 'SharedAccessSignature sr=streammjsp4.servicebus.windows.net%2Fteresina&sig=tQBEAAGRpvHNRCzk6vmt8Iv7Tgnt90CpQLHtbptMzro%3D&se=1948804547&skn=sendevent'
-            },})
-           } catch{err=> logger.info(`${id} - ${new Date().toLocaleString()} - 3 - erro ocorrido: ${err}`)}
-
-
+            },}).then(console.log('enviou mjsp dados da labor novos')).catch(err=> logger.info(`${id} - ${new Date().toLocaleString()} - 3 - erro ocorrido no envio da labor novos para mjsp:${err}`))
+           
+        } catch{err=> logger.info(`${id} - ${new Date().toLocaleString()} - 3 - erro ocorrido aqui 1:${err}`)}
 	   // Enviando para a PRF
             const formato = {
                     placa:pass.PlacaVeiculo,
@@ -95,13 +94,13 @@ exports.post = async (req,res) => {
                     empresa: "LABOR",
                     key:"C08558B3E10008EFADAAA42839C2D0",
                 }
-	   console.log(formato)
-            await axios.post('https://wsocrspia.prf.gov.br/wsocrspia/pi',formato,{
+                const re = await axios.post('https://wsocrspia.prf.gov.br/wsocrspia/pi',formato,{
                 headers: {
                      "Content-Type": "application/json",
                      "User-Agent": 'strans'
                 },
             })
+            console.log(re.data)//.then(console.log('enviou prf dados novos')).catch(err=> logger.info(`${id} - ${new Date().toLocaleString()} - 3 - erro ocorrido no envio da labor novos para prf:${err}`))
 
         }}))
        
@@ -131,7 +130,7 @@ exports.post = async (req,res) => {
                     placa:pass.PlacaVeiculo,
                     dataHora:pass.DataHoraPassagem,
                     cameraNumero: pass.Equipamento,
-                    }).then().catch(err=> logger.info(`${id} - ${new Date().toLocaleString()} - 3 - erro ocorrido: ${err}`))
+                    }).then().catch(err=> logger.info(`${id} - ${new Date().toLocaleString()} - 3 - erro ocorrido no salvalmento no bd: ${err}`))
 
                 await axios.post('https://streammjsp4.servicebus.windows.net/teresina/messages',
                 {   placa:pass.PlacaVeiculo,
@@ -142,26 +141,27 @@ exports.post = async (req,res) => {
                 "Content-Type": "application/json",
                 "Authorization": 'SharedAccessSignature sr=streammjsp4.servicebus.windows.net%2Fteresina&sig=tQBEAAGRpvHNRCzk6vmt8Iv7Tgnt90CpQLHtbptMzro%3D&se=1948804547&skn=sendevent'
                 },
-            })
+                }).then(console.log('enviou mjsp')).catch(err=> logger.info(`${id} - ${new Date().toLocaleString()} - 3 - erro ocorrido no envio dos dados velhos para o mjsp:${err}`))
+
               } catch{err=> logger.info(`${id} - ${new Date().toLocaleString()} - 3 - erro ocorrido: ${err}`)}
-
-             const formato = {
-                    placa:pass.PlacaVeiculo,
-                    dataHoraTz:pass.DataHoraPassagem + '-03:00',
-                    camera: {
-                        numero: pass.Faixa.slice(0,7).replace('-','').replace('T','')
+            try { 
+                const formato = {
+                        placa:pass.PlacaVeiculo,
+                        dataHoraTz:pass.DataHoraPassagem + '-03:00',
+                        camera: {
+                            numero: pass.Faixa.slice(0,7).replace('-','').replace('T','')
+                        },
+                        empresa: "LABOR",
+                        key:"C08558B3E10008EFADAAA42839C2D0",
+                    }
+                await axios.post('https://wsocrspia.prf.gov.br/wsocrspia/pi',formato,{
+                    headers: {
+                        "Content-Type": "application/json",
+                        "User-Agent": 'strans'
                     },
-                    empresa: "LABOR",
-                    key:"C08558B3E10008EFADAAA42839C2D0",
-                }
-            console.log(formato)
-            await axios.post('https://wsocrspia.prf.gov.br/wsocrspia/pi',formato,{
-                headers: {
-                     "Content-Type": "application/json",
-                     "User-Agent": 'strans'
-                },
-            })
-
+                }).then(console.log('enviou prf')).catch(err=> logger.info(`${id} - ${new Date().toLocaleString()} - 3 - erro ocorrido no envio dos dados velhos para a prf:${err}`))
+            } catch{err=> logger.info(`${id} - ${new Date().toLocaleString()} - 3 - erro ocorrido: ${err}`)}
+      
             }
         }}))
 
@@ -172,7 +172,7 @@ exports.post = async (req,res) => {
 
         res.status(200).json({1: dadosTotais})
     } catch(err) {
-        logger.info(`${id} - ${new Date().toLocaleString()} - 3 - erro ocorrido: ${err}`)        
+        logger.info(`${id} - ${new Date().toLocaleString()} - 3 - erro ocorrido: ${err.message}`)        
         return res.status(200).json({erro: err.name, menssagem: err.message})
     }
 };
