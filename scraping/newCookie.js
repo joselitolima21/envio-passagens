@@ -9,12 +9,12 @@ module.exports = (async () => {
     args: ['--no-sandbox', '--disable-setuid-sandbox']
   }); //Rodando com interface
   const page = await browser.newPage();
+
   // Ajustando a tela
   //await page.setViewport({width: 1200, height: 720})
   await page.goto('https://strans.codtran.ws/');
   await page.type('#Username', CRED_USERNAME);
   await page.type('#Password', CRED_PASSWORD);
-  
   await Promise.all([
     page.click("button"),
     page.waitForNavigation({ waitUntil: 'load' }),
