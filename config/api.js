@@ -66,7 +66,6 @@ module.exports = async function (data,horaInicial,horaFinal,id,order) {
     }
     // Fazendo a chamada com o cookieString do json
     const cookies = await JSON.parse(fs.readFileSync(path.resolve(__dirname,'../cookies/cookies.json'), 'utf8'))
-    
     if(cookies[0]) {
         var cookieString1 = cookies[4].name+"="+cookies[4].value+"; "+cookies[3].name+"="+cookies[3].value+"; "+cookies[2].name+"="+cookies[2].value+"; "+cookies[0].name+"="+cookies[0].value
     } else {

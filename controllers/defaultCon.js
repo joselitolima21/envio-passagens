@@ -4,6 +4,7 @@ const api = require('../config/api')
 const { passagens } = require('../models')
 const axios = require("axios");
 var payload = require('../config/atlanta') 
+var moment = require('moment')
 
 exports.post = async (req,res) => {
     // Criando número aleátorio para indentificar cada chamada
@@ -30,29 +31,29 @@ exports.post = async (req,res) => {
             await passagens.create({
                 idOriginal: pass.id,
                 placa:pass.placaVeiculo,
-                dataHora: new Date(pass.dtHoraEvento).toISOString(),
+                dataHora: moment(pass.dtHoraEvento).format(),
                 cameraNumero: pass.nomeEquipamento,
             })
-            
             // Enviando para o MJ
             const resp = await axios.post('https://streammjsp4.servicebus.windows.net/teresina/messages',{
                 placa:pass.placaVeiculo,
-                dataHora: new Date(pass.dtHoraEvento).toISOString(),
-                cameraNumero: pass.nomeEquipamento+(pass.faixa.nuFaixa).toString(), //nuSerieEquipamento
+                dataHoraLocal: moment(pass.dtHoraEvento).format(),
+                codigoLocal: pass.nomeEquipamento+(pass.faixa.nuFaixa).toString(), //nuSerieEquipamento,
+                numeroFaixa: pass.faixa.nuFaixa
             },{
                 headers: {
                 "Content-Type": "application/json",
                 "Authorization": 'SharedAccessSignature sr=streammjsp4.servicebus.windows.net%2Fteresina&sig=tQBEAAGRpvHNRCzk6vmt8Iv7Tgnt90CpQLHtbptMzro%3D&se=1948804547&skn=sendevent'
             },
             })
-
-	    console.log({
+            console.log({
                 placa:pass.placaVeiculo,
-                dataHora: new Date(pass.dtHoraEvento).toISOString(),
-                cameraNumero: pass.nomeEquipamento+(pass.faixa.nuFaixa).toString(), //nuSerieEquipamento
-            })
-                } catch{err=> logger.info(`${id} - ${new Date().toLocaleString()} - 3 - erro ocorrido: ${err.message}`)}
-            
+                dataHoraLocal: moment(pass.dtHoraEvento).format(),
+                codigoLocal: pass.nomeEquipamento+(pass.faixa.nuFaixa).toString(), //nuSerieEquipamento,
+                numeroFaixa: pass.faixa.nuFaixa
+            },'mj')
+            console.log(resp.status)
+            } catch{err=> logger.info(`${id} - ${new Date().toLocaleString()} - 3 - erro ocorrido: ${err.message}`)}
             
             }}))
             
@@ -76,30 +77,31 @@ exports.post = async (req,res) => {
             await passagens.create({
                 idOriginal: pass.Id.toString(),
                 placa:pass.PlacaVeiculo,
-                dataHora:pass.DataHoraPassagem,
+                dataHora:moment(pass.DataHoraPassagem).format(),
                 cameraNumero: pass.Equipamento,
             }).then().catch(err=> logger.info(`${id} - ${new Date().toLocaleString()} - 3 - erro ocorrido no salvamendo dos dados no BD:${err}`))
 
             // Enviando para o MJ
            const resp = await axios.post('https://streammjsp4.servicebus.windows.net/teresina/messages', {   
                 placa:pass.PlacaVeiculo,
-                dataHora:pass.DataHoraPassagem,
-                cameraNumero: pass.Equipamento,
+                dataHoraLocal:moment(pass.DataHoraPassagem).format(),
+                codigoLocal:pass.Faixa.slice(0,7).replace('-','').replace('T',''),
             },{
             headers: {
             "Content-Type": "application/json",
             "Authorization": 'SharedAccessSignature sr=streammjsp4.servicebus.windows.net%2Fteresina&sig=tQBEAAGRpvHNRCzk6vmt8Iv7Tgnt90CpQLHtbptMzro%3D&se=1948804547&skn=sendevent'
-            },}).then(console.log('enviou mjsp dados da labor novos')).catch(err=> logger.info(`${id} - ${new Date().toLocaleString()} - 3 - erro ocorrido no envio da labor novos para mjsp:${err}`))
-           console.log(resp.status)
-	   console,log({ placa:pass.PlacaVeiculo,
-                dataHora:pass.DataHoraPassagem,
-                cameraNumero: pass.Equipamento,
-            })
+            },}).then().catch(err=> logger.info(`${id} - ${new Date().toLocaleString()} - 3 - erro ocorrido no envio da labor novos para mjsp:${err}`))
+            console.log({   
+                placa:pass.PlacaVeiculo,
+                dataHoraLocal:moment(pass.DataHoraPassagem).format(),
+                codigoLocal:pass.Faixa.slice(0,7).replace('-','').replace('T',''),
+            },'mj')
+            console.log(resp.status)
         } catch{err=> logger.info(`${id} - ${new Date().toLocaleString()} - 3 - erro ocorrido aqui 1:${err}`)}
 	   // Enviando para a PRF
             const formato = {
                     placa:pass.PlacaVeiculo,
-                    dataHoraTz:pass.DataHoraPassagem + '-03:00',
+                    dataHoraTz:moment(pass.DataHoraPassagem).format(),
                     camera: {
                         numero: pass.Faixa.slice(0,7).replace('-','').replace('T','')
                     },
@@ -112,8 +114,7 @@ exports.post = async (req,res) => {
                      "User-Agent": 'strans'
                 },
             })
-            console.log(re.data)//.then(console.log('enviou prf dados novos')).catch(err=> logger.info(`${id} - ${new Date().toLocaleString()} - 3 - erro ocorrido no envio da labor novos para prf:${err}`))
-
+            //console.log(re.data)//.then(console.log('enviou prf dados novos')).catch(err=> logger.info(`${id} - ${new Date().toLocaleString()} - 3 - erro ocorrido no envio da labor novos para prf:${err}`))
         }}))
        
         logger.info(`${id} - ${new Date().toLocaleString()} - 0 - salvo no BD, a chamada para os dados atuais da labor`)
@@ -140,26 +141,31 @@ exports.post = async (req,res) => {
                 await passagens.create({
                     idOriginal: pass.Id.toString(),
                     placa:pass.PlacaVeiculo,
-                    dataHora:pass.DataHoraPassagem,
+                    dataHora:moment(pass.DataHoraPassagem).format(),
                     cameraNumero: pass.Equipamento,
                     }).then().catch(err=> logger.info(`${id} - ${new Date().toLocaleString()} - 3 - erro ocorrido no salvalmento no bd: ${err}`))
 
                 await axios.post('https://streammjsp4.servicebus.windows.net/teresina/messages',
                 {   placa:pass.PlacaVeiculo,
-                    dataHora:pass.DataHoraPassagem,
-                    cameraNumero: pass.Equipamento,
+                    dataHora:moment(pass.DataHoraPassagem).format(),
+                    codigoLocal: pass.Faixa.slice(0,7).replace('-','').replace('T',''),
                     },{
                 headers: {
-                "Content-Type": "application/json",
-                "Authorization": 'SharedAccessSignature sr=streammjsp4.servicebus.windows.net%2Fteresina&sig=tQBEAAGRpvHNRCzk6vmt8Iv7Tgnt90CpQLHtbptMzro%3D&se=1948804547&skn=sendevent'
+                    "Content-Type": "application/json",
+                    "Authorization": 'SharedAccessSignature sr=streammjsp4.servicebus.windows.net%2Fteresina&sig=tQBEAAGRpvHNRCzk6vmt8Iv7Tgnt90CpQLHtbptMzro%3D&se=1948804547&skn=sendevent'
                 },
-                }).then(console.log('enviou mjsp')).catch(err=> logger.info(`${id} - ${new Date().toLocaleString()} - 3 - erro ocorrido no envio dos dados velhos para o mjsp:${err}`))
+                }).then(res => { 
+                    console.log({   placa:pass.PlacaVeiculo,
+                    dataHora:moment(pass.DataHoraPassagem).format(),
+                    codigoLocal: pass.Faixa.slice(0,7).replace('-','').replace('T',''),
+                    });
+                    console.log(res.status)}).catch(err=> logger.info(`${id} - ${new Date().toLocaleString()} - 3 - erro ocorrido no envio dos dados velhos para o mjsp:${err}`))
 
               } catch{err=> logger.info(`${id} - ${new Date().toLocaleString()} - 3 - erro ocorrido: ${err}`)}
             try { 
                 const formato = {
                         placa:pass.PlacaVeiculo,
-                        dataHoraTz:pass.DataHoraPassagem + '-03:00',
+                        dataHoraTz:moment(pass.DataHoraPassagem).format(),
                         camera: {
                             numero: pass.Faixa.slice(0,7).replace('-','').replace('T','')
                         },
@@ -171,7 +177,7 @@ exports.post = async (req,res) => {
                         "Content-Type": "application/json",
                         "User-Agent": 'strans'
                     },
-                }).then(console.log('enviou prf')).catch(err=> logger.info(`${id} - ${new Date().toLocaleString()} - 3 - erro ocorrido no envio dos dados velhos para a prf:${err}`))
+                }).then().catch(err=> logger.info(`${id} - ${new Date().toLocaleString()} - 3 - erro ocorrido no envio dos dados velhos para a prf:${err}`))
             } catch{err=> logger.info(`${id} - ${new Date().toLocaleString()} - 3 - erro ocorrido: ${err}`)}
       
             }
