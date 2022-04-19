@@ -35,7 +35,7 @@ exports.post = async (req,res) => {
             })
             
             // Enviando para o MJ
-            await axios.post('https://streammjsp4.servicebus.windows.net/teresina/messages',{
+            const resp = await axios.post('https://streammjsp4.servicebus.windows.net/teresina/messages',{
                 placa:pass.placaVeiculo,
                 dataHora: new Date(pass.dtHoraEvento).toISOString(),
                 cameraNumero: pass.nomeEquipamento+(pass.faixa.nuFaixa).toString(), //nuSerieEquipamento
@@ -45,9 +45,17 @@ exports.post = async (req,res) => {
                 "Authorization": 'SharedAccessSignature sr=streammjsp4.servicebus.windows.net%2Fteresina&sig=tQBEAAGRpvHNRCzk6vmt8Iv7Tgnt90CpQLHtbptMzro%3D&se=1948804547&skn=sendevent'
             },
             })
+
+	    console.log({
+                placa:pass.placaVeiculo,
+                dataHora: new Date(pass.dtHoraEvento).toISOString(),
+                cameraNumero: pass.nomeEquipamento+(pass.faixa.nuFaixa).toString(), //nuSerieEquipamento
+            })
                 } catch{err=> logger.info(`${id} - ${new Date().toLocaleString()} - 3 - erro ocorrido: ${err.message}`)}
             
+            
             }}))
+            
         
 
         logger.info(`${id} - ${new Date().toLocaleString()} - 0 - salvo no BD, os dados da atlanta`)
@@ -73,7 +81,7 @@ exports.post = async (req,res) => {
             }).then().catch(err=> logger.info(`${id} - ${new Date().toLocaleString()} - 3 - erro ocorrido no salvamendo dos dados no BD:${err}`))
 
             // Enviando para o MJ
-            await axios.post('https://streammjsp4.servicebus.windows.net/teresina/messages', {   
+           const resp = await axios.post('https://streammjsp4.servicebus.windows.net/teresina/messages', {   
                 placa:pass.PlacaVeiculo,
                 dataHora:pass.DataHoraPassagem,
                 cameraNumero: pass.Equipamento,
@@ -82,7 +90,11 @@ exports.post = async (req,res) => {
             "Content-Type": "application/json",
             "Authorization": 'SharedAccessSignature sr=streammjsp4.servicebus.windows.net%2Fteresina&sig=tQBEAAGRpvHNRCzk6vmt8Iv7Tgnt90CpQLHtbptMzro%3D&se=1948804547&skn=sendevent'
             },}).then(console.log('enviou mjsp dados da labor novos')).catch(err=> logger.info(`${id} - ${new Date().toLocaleString()} - 3 - erro ocorrido no envio da labor novos para mjsp:${err}`))
-           
+           console.log(resp.status)
+	   console,log({ placa:pass.PlacaVeiculo,
+                dataHora:pass.DataHoraPassagem,
+                cameraNumero: pass.Equipamento,
+            })
         } catch{err=> logger.info(`${id} - ${new Date().toLocaleString()} - 3 - erro ocorrido aqui 1:${err}`)}
 	   // Enviando para a PRF
             const formato = {
