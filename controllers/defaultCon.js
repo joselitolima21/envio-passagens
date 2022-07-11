@@ -114,7 +114,7 @@ exports.post = async (req,res) => {
                      "User-Agent": 'strans'
                 },
             })
-            //console.log(re.data)//.then(console.log('enviou prf dados novos')).catch(err=> logger.info(`${id} - ${new Date().toLocaleString()} - 3 - erro ocorrido no envio da labor novos para prf:${err}`))
+            console.log(re.data)//.then(console.log('enviou prf dados novos')).catch(err=> logger.info(`${id} - ${new Date().toLocaleString()} - 3 - erro ocorrido no envio da labor novos para prf:${err}`))
         }}))
        
         logger.info(`${id} - ${new Date().toLocaleString()} - 0 - salvo no BD, a chamada para os dados atuais da labor`)
